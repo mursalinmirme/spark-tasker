@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { authContext } from "../authProvider/AuthProvider";
 
 const Navbar = () => {
+  const {userLogout, user} = useContext(authContext);
+  const navigate = useNavigate();
   const NavItem = (
     <>
       <NavLink to="/">
@@ -28,8 +30,17 @@ const Navbar = () => {
     </>
 
   );
-  const {name} = useContext(authContext)
-  console.log(name);
+  const handleLogout = () => {
+     userLogout()
+     .then(res => {
+      console.log('logout resp',res);
+      navigate('/')
+     })
+     .catch(err => {
+      console.log('logout err',err);
+     })
+  }
+
   return (
     <div className="fixed top-0 w-full bg-[#EDF6F9] z-50">
     <div className="navbar py-3.5 w-11/12 mx-auto">
@@ -66,7 +77,9 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="text-base bg-[#006D77] text-[#EDF6F9] border-none outline-none px-4 py-2.5 rounded font-semibold hover:bg-[#FFDDD2] cursor-pointer">Logout</a>
+        {
+          user?.email ? <a onClick={handleLogout} className="text-base bg-[#006D77] text-[#EDF6F9] border-none outline-none px-4 py-2.5 rounded font-semibold hover:bg-[#FFDDD2] cursor-pointer">Logout</a> : <Link to={'/signin'}><a className="text-base bg-[#006D77] text-[#EDF6F9] border-none outline-none px-4 py-2.5 rounded font-semibold hover:bg-[#FFDDD2] cursor-pointer">Join now</a></Link>
+        }
       </div>
     </div>
     </div>

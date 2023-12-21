@@ -10,10 +10,13 @@ import Signin from "./pages/Signin.jsx";
 import Signup from "./pages/Signup.jsx";
 import AddAnewTask from "./pages/dashboardComponents.jsx/AddAnewTask.jsx";
 import MyTodoList from "./pages/dashboardComponents.jsx/MyTodoList.jsx";
+import PrivateRouter from "./privateRouter/PrivateRouter.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 const router = createBrowserRouter([
   {
     path: "",
     element: <MainLayout></MainLayout>,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: "",
@@ -27,23 +30,25 @@ const router = createBrowserRouter([
         path: "signin",
         element: <Signin></Signin>,
       },
+
     ],
   },
   {
     path: "dashboard",
-    element: <Dashboard></Dashboard>,
+    element: <PrivateRouter><Dashboard></Dashboard></PrivateRouter>,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: "",
-        element: <MyTodoList></MyTodoList>,
+        element: <PrivateRouter><MyTodoList></MyTodoList></PrivateRouter>,
       },
       {
         path: "my-todos",
-        element: <MyTodoList></MyTodoList>,
+        element: <PrivateRouter><MyTodoList></MyTodoList></PrivateRouter>,
       },
       {
         path: "add-a-new-task",
-        element: <AddAnewTask></AddAnewTask>,
+        element: <PrivateRouter><AddAnewTask></AddAnewTask></PrivateRouter>,
       },
     ],
   },
