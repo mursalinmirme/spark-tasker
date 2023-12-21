@@ -6,8 +6,8 @@ const Dashboard = () => {
   return (
     <div>
       <Navbar></Navbar>
-      <div>
-        <div className="w-80 bg-[#006D77] pt-20 min-h-screen px-5">
+      <div className="flex gap-2 pt-16">
+        <div className="w-80 bg-[#006D77] min-h-screen px-5">
           <div className="mb-7">
             <div className="w-40 h-40 mx-auto mt-7">
               <img
@@ -22,23 +22,23 @@ const Dashboard = () => {
           </div>
           <hr />
           <div className="mt-10 space-y-3">
-            <div className="text-lg font-medium py-2 px-2 text-white hover:bg-[#83C5BE]">
-            <NavLink to="/add-a-new-task">
+            <div className="">
+            <NavLink to="my-todos">
               {({ isActive }) => (
-                <span className={isActive ? "active" : ""}>My Todo List</span>
+                <span className={isActive ? "text-lg font-medium py-2 px-2 text-white bg-[#83C5BE] block rounded-md" : "text-lg font-medium py-2 px-2 text-white bg-transparent"}>My Todo List</span>
               )}
             </NavLink>
             </div>
-            <div className="text-lg font-medium py-2 px-2 text-white hover:bg-[#83C5BE]">
-            <NavLink to="/signin">
+            <div className="]">
+            <NavLink to="add-a-new-task">
               {({ isActive }) => (
-                <span className={isActive ? "active" : ""}>Add a New Task</span>
+                <span className={isActive ? "text-lg font-medium py-2 px-2 text-white bg-[#83C5BE] block" : "text-lg font-medium py-2 px-2 text-white bg-transparent"}>Add a New Task</span>
               )}
             </NavLink>
             </div>
           </div>
         </div>
-        <div>
+        <div className="mt-2 flex-1">
           <Outlet></Outlet>
         </div>
       </div>

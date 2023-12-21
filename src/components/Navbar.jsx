@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { authContext } from "../authProvider/AuthProvider";
 
 const Navbar = () => {
   const NavItem = (
@@ -8,7 +10,7 @@ const Navbar = () => {
           <span className={isActive ? "active" : ""}>Home</span>
            )}
              </NavLink>
-      <NavLink to="/dashboard">
+      <NavLink to="/dashboard/my-todos">
         {({ isActive }) => (
           <span className={isActive ? "active" : ""}>Dashboard</span>
            )}
@@ -24,7 +26,10 @@ const Navbar = () => {
            )}
              </NavLink>
     </>
+
   );
+  const {name} = useContext(authContext)
+  console.log(name);
   return (
     <div className="fixed top-0 w-full bg-[#EDF6F9] z-50">
     <div className="navbar py-3.5 w-11/12 mx-auto">
