@@ -1,8 +1,12 @@
-import { useState } from "react";
+import axios from "axios";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
+import { authContext } from "../../authProvider/AuthProvider";
 const AddAnewTask = () => {
     const [selectPriority, setSelectPriority] = useState('');
+    const {user} = useContext(authContext)
     const {
         register,
         handleSubmit,
@@ -15,9 +19,26 @@ const AddAnewTask = () => {
             toast.error('Please select a Priority');
             return
         }
-        
+        const taskUser = user?.email;
+        const status = 'todo';
+        const newTask = { ...data, selectPriority, status, taskUser };
+        axios.post(`http://localhost:5000/add-tasks`, newTask)
+        .then(res => {
+            console.log(res.data.acknowledged);
+            if(res.data.acknowledged){
+                Swal.fire({
+                    position: "center-center",
+                    icon: "success",
+                    title: "Your task added successfully",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
 
-        
       }
     const handlePriority = (e) => {
         setSelectPriority('');

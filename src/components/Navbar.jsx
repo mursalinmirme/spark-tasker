@@ -10,24 +10,29 @@ const Navbar = () => {
     <>
       <NavLink to="/">
         {({ isActive }) => (
-          <span className={isActive ? "active" : ""}>Home</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Home</span>
            )}
              </NavLink>
       <NavLink to="/dashboard/my-todos">
         {({ isActive }) => (
-          <span className={isActive ? "active" : ""}>Dashboard</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Dashboard</span>
            )}
              </NavLink>
-      <NavLink to="/signup">
+      {
+        !user?.email && <NavLink to="/signup">
         {({ isActive }) => (
-          <span className={isActive ? "active" : ""}>Sign Up</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Sign Up</span>
            )}
              </NavLink>
-      <NavLink to="/signin">
+      }
+      {
+        !user?.email && <NavLink to="/signin">
         {({ isActive }) => (
-          <span className={isActive ? "active" : ""}>Sign In</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Sign In</span>
            )}
              </NavLink>
+      }
+      
     </>
 
   );
