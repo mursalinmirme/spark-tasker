@@ -2,13 +2,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import signin from '../assets/signin.jpg';
 import { FcGoogle } from "react-icons/fc";
 import { RxGithubLogo } from "react-icons/rx";
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { authContext } from '../authProvider/AuthProvider';
+import toast from 'react-hot-toast';
 const Signin = () => {
-    const {signinwithEmail, signInWihtGoogle} = useContext(authContext);
+    const {signinwithEmail, signInWihtGoogle,signinwithGithub} = useContext(authContext);
     const navigate = useNavigate();
+    const [signupLoading, setSignupLoading] = useState(false);
     const handleSignin = (e) => {
         e.preventDefault();
+        setSignupLoading(true);
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
@@ -18,21 +21,35 @@ const Signin = () => {
         .then(res => {
             console.log(res);
                 navigate('/dashboard/my-todos')
+                setSignupLoading(false)
+                toast.success('Login Successfully')
         })
         .catch(err => {
+            toast.error(err.message)
             console.log(err);
+            setSignupLoading(false)
         })
     }
     const handleSignInWithGoogle = () => {
         signInWihtGoogle()
         .then(response => {
             console.log('google sign in response', response);
-            if(response.user.email) {
                 navigate('/dashboard/my-todos')
-            }
         })
         .catch(error => {
             console.log('google sign in error', error);
+        })
+    }
+    const handleSignInWithGithub = () => {
+        signinwithGithub()
+        .then(response => {
+            console.log('github sign in response', response);
+                navigate('/dashboard/my-todos');
+                toast.success('Registration Successfully!')
+        })
+        .catch(error => {
+            console.log('github sign in error', error);
+            toast.error(error.message)
         })
     }
     return (
@@ -54,7 +71,7 @@ const Signin = () => {
                     <input className='border w-full mt-1 px-3 py-2.5' type="password" name="password" placeholder='Enter your password' />
                     </div>
                     <div>
-                        <button type='submit' className='w-full bg-[#006D77] mt-8 py-2.5 text-lg font-semibold text-white rounded-md'>Sign In</button>
+                    <button type='submit' className='w-full bg-[#006D77] mt-7 py-2.5 text-lg font-semibold text-white rounded-md'>{signupLoading ? <span className="loading loading-spinner loading-md"></span> : 'Sign Up'}</button>
                     </div>
                     </form>
                     <p className='text-center mt-3'>Already Have an account?<Link className='underline ml-1.5' to={'/signup'}>Sign up now</Link></p>
@@ -68,7 +85,7 @@ const Signin = () => {
                             <FcGoogle className='text-4xl mx-auto' />
                             <p className='text-xl font-semibold mt-2'>Google</p>
                         </div>
-                        <div className='border flex-1 text-xl gap-2 text-center p-2.5'>
+                        <div onClick={handleSignInWithGithub} className='border flex-1 text-xl gap-2 text-center p-2.5'>
                             <RxGithubLogo className='text-4xl mx-auto' />
                             <p className='text-xl font-semibold mt-1'>Github</p>
                         </div>

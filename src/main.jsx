@@ -12,6 +12,7 @@ import AddAnewTask from "./pages/dashboardComponents.jsx/AddAnewTask.jsx";
 import MyTodoList from "./pages/dashboardComponents.jsx/MyTodoList.jsx";
 import PrivateRouter from "./privateRouter/PrivateRouter.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
+import { Toaster } from "react-hot-toast";
 const router = createBrowserRouter([
   {
     path: "",
@@ -58,5 +59,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <RouterProvider router={router}></RouterProvider>
     </AuthProvider>
+    <div><Toaster/></div>
   </React.StrictMode>
 );

@@ -2,14 +2,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import signup from '../assets/signup.jpg';
 import { FcGoogle } from "react-icons/fc";
 import { RxGithubLogo } from "react-icons/rx";
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { authContext } from '../authProvider/AuthProvider';
 import toast from 'react-hot-toast';
 const Signup = () => {
     const { createUserByEmail, updateName, signInWihtGoogle, signinwithGithub } = useContext(authContext);
     const navigate = useNavigate();
+    const [signupLoading, setSignupLoading] = useState(false);
     const handleCreateUser = (e) => {
         e.preventDefault();
+        setSignupLoading(true);
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
@@ -23,11 +25,12 @@ const Signup = () => {
                 console.log('update resp is', upRes);
                 navigate('/dashboard/my-todos');
                 toast.success('Registration Successfully!')
+                setSignupLoading(false);
             })
             .catch(upErr => {
                 console.log('UpError is', upErr);
                 toast.error(upErr.message)
-
+                setSignupLoading(false);
             })
         })
         .catch(err => {
@@ -38,10 +41,8 @@ const Signup = () => {
         signInWihtGoogle()
         .then(response => {
             console.log('google sign in response', response);
-            if(response.user.email) {
                 navigate('/dashboard/my-todos');
-                toast.success('Registration Successfully!')
-            }
+                toast.success('Registration Successfully!');
         })
         .catch(error => {
             console.log('google sign in error', error);
@@ -52,10 +53,8 @@ const Signup = () => {
         signinwithGithub()
         .then(response => {
             console.log('github sign in response', response);
-            if(response.user.email) {
                 navigate('/dashboard/my-todos');
                 toast.success('Registration Successfully!')
-            }
         })
         .catch(error => {
             console.log('github sign in error', error);
@@ -85,7 +84,7 @@ const Signup = () => {
                     <input className='border w-full mt-1 px-3 py-2.5' type="password" name="password" placeholder='Enter your password' />
                     </div>
                     <div>
-                        <button type='submit' className='w-full bg-[#006D77] mt-7 py-2.5 text-lg font-semibold text-white rounded-md'>Sign Up</button>
+                        <button type='submit' className='w-full bg-[#006D77] mt-7 py-2.5 text-lg font-semibold text-white rounded-md'>{signupLoading ? <span className="loading loading-spinner loading-md"></span> : 'Sign Up'}</button>
                     </div>
                     </form>
                     <p className='text-center mt-3'>Dont Have an account?<Link className='underline ml-1.5' to={'/signin'}>Sign up now_</Link></p>
