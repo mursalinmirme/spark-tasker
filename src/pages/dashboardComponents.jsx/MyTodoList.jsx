@@ -147,7 +147,7 @@ const MyTodoList = () => {
     let add;
     let active = ongoingTasks;
     let complete = completedTasks;
-    // Source Logic
+
     if (source.droppableId === "todoList") {
       add = active[source.index];
       active.splice(source.index, 1);
@@ -156,7 +156,6 @@ const MyTodoList = () => {
       complete.splice(source.index, 1);
     }
 
-    // Destination Logic
     if (destination.droppableId === "todoList") {
       active.splice(destination.index, 0, add);
     } else {
@@ -179,7 +178,7 @@ const MyTodoList = () => {
         <div>
         <Droppable droppableId="todoList">
           {(provided, snapshot) => (
-            <div className={`${snapshot.isDraggingOver && 'bg-red-500'}`} ref={provided.innerRef} {...provided.droppableProps}>
+            <div className={`${snapshot.isDraggingOver && 'bg-[#83C5BE]'}`} ref={provided.innerRef} {...provided.droppableProps}>
               <h3 className={`text-2xl font-bold text-center`}>Todo List</h3>
               {myTasks.map((task, index) => (
                 <Draggable
