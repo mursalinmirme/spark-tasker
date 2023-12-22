@@ -13,6 +13,8 @@ const MyTodoList = () => {
   const { user } = useContext(authContext);
   const [updateId, setUpdateId] = useState("");
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [ongoingTasks, setOngoingTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
 
   const {
     register,
@@ -23,7 +25,7 @@ const MyTodoList = () => {
     queryKey: ["mineTasks"],
     queryFn: async () => {
       const fetchMyTodos = await axios.get(
-        `http://localhost:5000/my-todos?email=${user?.email}`
+        `https://spark-tasker-server.vercel.app/my-todos?email=${user?.email}`
       );
       const result = fetchMyTodos.data;
       return result;
@@ -44,7 +46,9 @@ const MyTodoList = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`http://localhost:5000/delete-task/${deleteId}`)
+          .delete(
+            `https://spark-tasker-server.vercel.app/delete-task/${deleteId}`
+          )
           .then((res) => {
             if (res.data.acknowledged) {
               Swal.fire({
@@ -73,7 +77,7 @@ const MyTodoList = () => {
     enabled: !!updateId,
     queryFn: async () => {
       const updateFetch = await axios.get(
-        `http://localhost:5000/update-task/${updateId}`
+        `https://spark-tasker-server.vercel.app/update-task/${updateId}`
       );
       const result = updateFetch.data;
       setSelectPriority(result?.selectPriority);
@@ -109,7 +113,7 @@ const MyTodoList = () => {
     console.log(newUpdateTask);
     axios
       .put(
-        `http://localhost:5000/update-task/${updateTask?._id}`,
+        `https://spark-tasker-server.vercel.app/update-task/${updateTask?._id}`,
         newUpdateTask
       )
       .then((res) => {
@@ -131,7 +135,37 @@ const MyTodoList = () => {
         setUpdateLoading(false);
       });
   };
+  const onDragEnd = (result) => {
+    const {source, destination} = result;
+    console.log(result);
+    if(!destination){
+      return
+    }
+    if(destination.droppableId === source.droppableId && destination.index === source.index){
+      return
+    }
+    let add;
+    let active = ongoingTasks;
+    let complete = completedTasks;
+    // Source Logic
+    if (source.droppableId === "todoList") {
+      add = active[source.index];
+      active.splice(source.index, 1);
+    } else {
+      add = complete[source.index];
+      complete.splice(source.index, 1);
+    }
 
+    // Destination Logic
+    if (destination.droppableId === "todoList") {
+      active.splice(destination.index, 0, add);
+    } else {
+      complete.splice(destination.index, 0, add);
+    }
+
+    setOngoingTasks(active);
+    setCompletedTasks(complete)
+  }
   return (
     <div>
       <div className="text-center py-3">
@@ -139,149 +173,177 @@ const MyTodoList = () => {
           My Todo List
         </h2>
       </div>
-      <DragDropContext onDragEnd={() => {}} className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-5">
+      <DragDropContext onDragEnd={onDragEnd}>
         {/* my to do list */}
-        <Droppable droppableId="mytodos">
-            {
-                (provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                        <h3 className="text-3xl font-bold">Todo List</h3>
-                    {myTasks.map((task, index) => (
-                      <Draggable key={task?._id} draggableId={task?._id} index={index}>
-                        {
-                            (provided) => (
-                                <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} key={task?._id} className="border mt-4 shadow p-3">
-                        <h6 className="text-base">
-                          <span className="font-medium">Title:</span> {task?.title}
-                        </h6>
-                        <p className="mt-1">
-                          <span className="font-medium">Description:</span>{" "}
-                          {task?.descriptions}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Priority:</span>{" "}
-                          {task?.selectPriority}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Deadline:</span>{" "}
-                          {moment(task?.deadlines).format("lll")}
-                        </p>
-                        <div className="flex justify-end gap-5 pt-3">
-                          <MdDeleteForever
-                            onClick={() => handleTaskDelete(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                          <AiFillEdit
-                            onClick={() => handleUpdateTask(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                        </div>
-                        </div>
-                            )
-                        }
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )
-            }
-         
+        <div>
+        <Droppable droppableId="todoList">
+          {(provided, snapshot) => (
+            <div className={`${snapshot.isDraggingOver && 'bg-red-500'}`} ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className={`text-2xl font-bold text-center`}>Todo List</h3>
+              {myTasks.map((task, index) => (
+                <Draggable
+                  key={task?._id}
+                  draggableId={task?._id}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      key={task?._id}
+                      className="border mt-4 shadow p-3"
+                    >
+                      <h6 className="text-base">
+                        <span className="font-medium">Title:</span>{" "}
+                        {task?.title}
+                      </h6>
+                      <p className="mt-1">
+                        <span className="font-medium">Description:</span>{" "}
+                        {task?.descriptions}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Priority:</span>{" "}
+                        {task?.selectPriority}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Deadline:</span>{" "}
+                        {moment(task?.deadlines).format("lll")}
+                      </p>
+                      <div className="flex justify-end gap-5 pt-3">
+                        <MdDeleteForever
+                          onClick={() => handleTaskDelete(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                        <AiFillEdit
+                          onClick={() => handleUpdateTask(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
         </Droppable>
+        </div>
 
         {/* my ongoing tasks */}
 
+        <div>
         <Droppable droppableId="ongoing">
-        {
-                (provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                        <h3 className="text-3xl font-bold">On Going</h3>
-                    {myTasks.map((task, index) => (
-                      <Draggable key={task?._id} draggableId={task?._id} index={index}>
-                        {
-                            (provided) => (
-                                <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} key={task?._id} className="border mt-4 shadow p-3">
-                        <h6 className="text-base">
-                          <span className="font-medium">Title:</span> {task?.title}
-                        </h6>
-                        <p className="mt-1">
-                          <span className="font-medium">Description:</span>{" "}
-                          {task?.descriptions}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Priority:</span>{" "}
-                          {task?.selectPriority}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Deadline:</span>{" "}
-                          {moment(task?.deadlines).format("lll")}
-                        </p>
-                        <div className="flex justify-end gap-5 pt-3">
-                          <MdDeleteForever
-                            onClick={() => handleTaskDelete(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                          <AiFillEdit
-                            onClick={() => handleUpdateTask(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                        </div>
-                        </div>
-                            )
-                        }
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )
-            }
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className="text-2xl font-bold text-center">On Going</h3>
+              {ongoingTasks.map((task, index) => (
+                <Draggable
+                  key={task?._id}
+                  draggableId={task?._id}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      key={task?._id}
+                      className="border mt-4 shadow p-3"
+                    >
+                      <h6 className="text-base">
+                        <span className="font-medium">Title:</span>{" "}
+                        {task?.title}
+                      </h6>
+                      <p className="mt-1">
+                        <span className="font-medium">Description:</span>{" "}
+                        {task?.descriptions}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Priority:</span>{" "}
+                        {task?.selectPriority}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Deadline:</span>{" "}
+                        {moment(task?.deadlines).format("lll")}
+                      </p>
+                      <div className="flex justify-end gap-5 pt-3">
+                        <MdDeleteForever
+                          onClick={() => handleTaskDelete(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                        <AiFillEdit
+                          onClick={() => handleUpdateTask(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
         </Droppable>
+        </div>
         {/* my completed tasks */}
+        <div>
         <Droppable droppableId="completed">
-        {
-                (provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                        <h3 className="text-3xl font-bold">Compeleted</h3>
-                    {myTasks.map((task, index) => (
-                      <Draggable key={task?._id} draggableId={task?._id} index={index}>
-                        {
-                            (provided) => (
-                                <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} key={task?._id} className="border mt-4 shadow p-3">
-                        <h6 className="text-base">
-                          <span className="font-medium">Title:</span> {task?.title}
-                        </h6>
-                        <p className="mt-1">
-                          <span className="font-medium">Description:</span>{" "}
-                          {task?.descriptions}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Priority:</span>{" "}
-                          {task?.selectPriority}
-                        </p>
-                        <p className="mt-1">
-                          <span className="font-medium">Deadline:</span>{" "}
-                          {moment(task?.deadlines).format("lll")}
-                        </p>
-                        <div className="flex justify-end gap-5 pt-3">
-                          <MdDeleteForever
-                            onClick={() => handleTaskDelete(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                          <AiFillEdit
-                            onClick={() => handleUpdateTask(task?._id)}
-                            className="text-xl hover:text-red-500"
-                          />
-                        </div>
-                        </div>
-                            )
-                        }
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )
-            }
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className="text-2xl font-bold text-center">Compeleted</h3>
+              {completedTasks.map((task, index) => (
+                <Draggable
+                  key={task?._id}
+                  draggableId={task?._id}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      key={task?._id}
+                      className="border mt-4 shadow p-3"
+                    >
+                      <h6 className="text-base">
+                        <span className="font-medium">Title:</span>{" "}
+                        {task?.title}
+                      </h6>
+                      <p className="mt-1">
+                        <span className="font-medium">Description:</span>{" "}
+                        {task?.descriptions}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Priority:</span>{" "}
+                        {task?.selectPriority}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-medium">Deadline:</span>{" "}
+                        {moment(task?.deadlines).format("lll")}
+                      </p>
+                      <div className="flex justify-end gap-5 pt-3">
+                        <MdDeleteForever
+                          onClick={() => handleTaskDelete(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                        <AiFillEdit
+                          onClick={() => handleUpdateTask(task?._id)}
+                          className="text-xl hover:text-red-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
         </Droppable>
+        </div>
       </DragDropContext>
+      </div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
       <dialog id="my_modal_3" className="modal">
         <div className="w-2/3 bg-white p-10 relative">
