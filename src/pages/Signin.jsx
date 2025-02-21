@@ -55,7 +55,7 @@ const Signin = () => {
     return (
         <div className='pt-12 w-11/12 mx-auto'>
             <div className='flex items-center justify-center flex-row-reverse py-16'>
-                <div className='w-[500px] h-[500px]'>
+                <div className='w-[500px] h-[500px] hidden lg:block'>
                     <img className='w-full h-full' src={signin} alt="" />
                 </div>
                 <div className='border w-[500px] p-6 rounded-xl'>

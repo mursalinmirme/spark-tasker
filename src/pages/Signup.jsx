@@ -64,7 +64,7 @@ const Signup = () => {
     return (
         <div className='pt-12 w-11/12 mx-auto'>
             <div className='flex items-center justify-center py-16'>
-                <div className='w-[700px] h-[550px]'>
+                <div className='w-[700px] h-[550px] hidden lg:block'>
                     <img className='w-full h-full' src={signup} alt="" />
                 </div>
                 <div className='border w-[550px] p-6 rounded-xl'>

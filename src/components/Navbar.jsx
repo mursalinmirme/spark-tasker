@@ -10,25 +10,25 @@ const Navbar = () => {
     <>
       <NavLink to="/">
         {({ isActive }) => (
-          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Home</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5 rounded-lg" : ""}>Home</span>
            )}
              </NavLink>
       <NavLink to="/dashboard/my-todos">
         {({ isActive }) => (
-          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Dashboard</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5 rounded-lg" : ""}>Dashboard</span>
            )}
              </NavLink>
       {
         !user?.email && <NavLink to="/signup">
         {({ isActive }) => (
-          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Sign Up</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5 rounded-lg" : ""}>Sign Up</span>
            )}
              </NavLink>
       }
       {
         !user?.email && <NavLink to="/signin">
         {({ isActive }) => (
-          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5" : ""}>Sign In</span>
+          <span className={isActive ? "bg-[#83C5BE] px-3 py-1.5 rounded-lg" : ""}>Sign In</span>
            )}
              </NavLink>
       }
@@ -49,8 +49,8 @@ const Navbar = () => {
   }
 
   return (
-    <div className="fixed top-0 w-full bg-[#EDF6F9] z-50">
-    <div className="navbar py-3.5 w-11/12 mx-auto">
+    <div className="fixed top-0 w-full bg-[#EDF6F9] z-50 max-w-screen-2xl">
+    <div className="navbar py-3.5 lg:w-11/12 mx-auto">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -71,7 +71,7 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-none w-80 h-80 text-lg space-y-4"
           >
             {NavItem}
           </ul>

@@ -11,6 +11,7 @@ const AddAnewTask = () => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -34,6 +35,7 @@ const AddAnewTask = () => {
             showConfirmButton: false,
             timer: 1500,
           });
+          reset();
         }
       })
       .catch((err) => {
@@ -47,7 +49,7 @@ const AddAnewTask = () => {
   };
   //   console.log(watch("example"))
   return (
-    <div className="w-2/3 mx-auto border shadow p-10 mb-20 mt-10">
+    <div className="lg:w-2/3 mx-auto border shadow p-10 mb-20 mt-10">
       <h4 className="text-center text-3xl font-bold">Add A New Task</h4>
       <form className="mt-10" onSubmit={handleSubmit(onSubmit)}>
         {/* register your input into the hook by invoking the "register" function */}

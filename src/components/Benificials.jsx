@@ -3,7 +3,7 @@ const Benificials = () => {
     return (
         <div className="my-10 w-11/12 mx-auto">
             <h3 className="text-center text-3xl font-semibold">Who Benefits Most</h3>
-            <div className="grid grid-cols-3 mt-16 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-16 gap-5">
                 <div data-aos="fade-up" className="shadow border p-5">
                     <h2 className="text-2xl font-bold">Developers</h2>
                     <p className="mt-1">Explore efficient project management and collaboration tools tailored to your coding workflow.</p>

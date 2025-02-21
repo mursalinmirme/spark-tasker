@@ -62,10 +62,10 @@ const Dashboard = () => {
 
 
   return (
-    <div>
+    <div className="max-w-screen-2xl mx-auto">
       <Navbar></Navbar>
-      <div className="flex gap-2 pt-16">
-        <div className="w-80 bg-[#006D77] min-h-screen px-5">
+      <div className="flex flex-col lg:flex-row gap-2 pt-16">
+        <div className="lg:w-80 bg-[#006D77] lg:min-h-screen px-5 pb-10 lg:pb-0">
           <div className="mb-7">
             <div className="w-40 h-40 mx-auto mt-7">
               <img
